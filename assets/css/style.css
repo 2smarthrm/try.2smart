@@ -4353,7 +4353,9 @@ body .try-demo-header form select,
 body .try-demo-header form textarea,
 body .try-demo-header form input{
   background-color:#f2f3fc !important;
+  border: none;
 }
+
  
 body .try-demo-header form h3{
   margin:0px !important;
