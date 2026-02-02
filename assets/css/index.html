@@ -1,0 +1,1970 @@
+ <!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Gestão de Documentos</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <style>
+    :root{
+      --brand:#6759ff;
+      --brand-2:#5547ff;
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#1f2430;
+      --muted:#6b7280;
+      --border:#e7e9f3;
+      --shadow: 0 10px 30px rgba(22, 24, 35, .08);
+      --radius:16px;
+      --radius-sm:12px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    }
+
+    /* Top bar */
+    .app-shell{
+      max-width: 1320px;
+      margin: 18px auto 40px;
+      padding: 0 14px;
+    }
+
+    .topbar{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px 14px;
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      justify-content:space-between;
+    }
+
+    .searchbox{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      border:1px solid var(--border);
+      border-radius: 14px;
+      background:#fff;
+      min-width: 320px;
+      flex:1;
+      max-width: 520px;
+    }
+    .searchbox i{ color: var(--muted); }
+    .searchbox input{
+      border:0;
+      outline:0;
+      width:100%;
+      font-size:14px;
+      background:transparent;
+    }
+
+    .pill{
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      white-space:nowrap;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .btn-brand{
+      background: var(--brand);
+      border-color: var(--brand);
+      color:#fff;
+      border-radius: 14px;
+      padding: 10px 14px;
+      font-weight:600;
+      box-shadow: 0 10px 20px rgba(103, 89, 255, .18);
+    }
+    .btn-brand:hover{
+      background: var(--brand-2);
+      border-color: var(--brand-2);
+      color:#fff;
+    }
+    .icon-toggle{
+      display:flex;
+      gap:8px;
+      padding: 8px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background:#fff;
+    }
+    .icon-toggle button{
+      border:0;
+      background:transparent;
+      width:38px;
+      height:38px;
+      border-radius: 12px;
+      display:grid;
+      place-items:center;
+      color: var(--muted);
+    }
+    .icon-toggle button.active{
+      background: rgba(103, 89, 255, .12);
+      color: var(--brand);
+    }
+
+    /* Tabs / Filters row */
+    .filters{
+      margin-top: 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 12px 14px;
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:10px;
+      justify-content:space-between;
+    }
+
+    .tabs{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+      align-items:center;
+    }
+    .tab{
+      border:1px solid transparent;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 14px;
+      color: var(--muted);
+      background: transparent;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .tab .count{
+      min-width: 24px;
+      height: 20px;
+      border-radius: 999px;
+      display:grid;
+      place-items:center;
+      font-size:12px;
+      color: var(--muted);
+      background: #f1f2f8;
+      padding: 0 6px;
+    }
+    .tab.active{
+      color: var(--brand);
+      background: rgba(103, 89, 255, .10);
+      border-color: rgba(103, 89, 255, .22);
+      font-weight: 600;
+    }
+    .tab.active .count{
+      background: rgba(103, 89, 255, .18);
+      color: var(--brand);
+    }
+
+    /* Bulk bar */
+    .bulkbar{
+      margin-top: 12px;
+      background: rgba(31, 36, 48, .95);
+      color:#fff;
+      border-radius: 16px;
+      padding: 10px 12px;
+      display:none;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      position: sticky;
+      top: 14px;
+      z-index: 20;
+      box-shadow: 0 18px 40px rgba(0,0,0,.18);
+    }
+    .bulkbar .left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    .bulkbar .right{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .bulkbar .chip{
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+    }
+    .bulkbar .btn{
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    /* Grid cards */
+    .grid{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    @media (max-width: 1100px){
+      .grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .searchbox{ min-width: 220px; }
+    }
+    @media (max-width: 520px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .doc-card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      transition: transform .14s ease, box-shadow .14s ease;
+    }
+    .doc-card:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px rgba(22, 24, 35, .12);
+    }
+    .card-top{
+      height: 150px;
+      background: #f1f2f8;
+      position:relative;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+    .card-top img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transform: scale(1.02);
+      filter: saturate(1.05);
+    }
+    .card-actions{
+      position:absolute;
+      inset: 10px 10px auto 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      pointer-events:none;
+    }
+    .card-actions .left,
+    .card-actions .right{
+      display:flex;
+      gap:8px;
+      pointer-events:auto;
+    }
+    .icon-btn{
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.38);
+      background: rgba(255,255,255,.86);
+      display:grid;
+      place-items:center;
+      color: #20263a;
+      box-shadow: 0 10px 18px rgba(0,0,0,.10);
+      cursor:pointer;
+    }
+    .icon-btn:hover{
+      background:#fff;
+    }
+
+    .doc-check{
+      position:absolute;
+      inset:auto auto 10px 10px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      background: rgba(255,255,255,.90);
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: 999px;
+      padding: 6px 10px;
+      box-shadow: 0 10px 18px rgba(0,0,0,.10);
+    }
+    .doc-check input{ width: 18px; height:18px; }
+
+    .card-body{
+      padding: 12px 12px 12px;
+    }
+    .doc-title{
+      font-weight: 700;
+      font-size: 15px;
+      line-height: 1.25;
+      margin: 0;
+      max-width: 100%;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space:nowrap;
+    }
+    .doc-meta{
+      margin-top: 6px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .badge-soft{
+      background: rgba(103, 89, 255, .10);
+      border: 1px solid rgba(103, 89, 255, .22);
+      color: var(--brand);
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      white-space:nowrap;
+    }
+    .doc-sub{
+      margin-top: 8px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .avatar{
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      display:grid;
+      place-items:center;
+      background: rgba(103, 89, 255, .15);
+      color: var(--brand);
+      font-weight: 800;
+      font-size: 12px;
+      border: 1px solid rgba(103, 89, 255, .25);
+    }
+
+    /* List view */
+    .list-wrap{
+      margin-top: 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      display:none;
+    }
+
+    .list-head{
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      background: #fff;
+    }
+
+    .list-table{
+      width:100%;
+    }
+    .list-table thead th{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      white-space:nowrap;
+    }
+    .list-table tbody td{
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .doc-row{
+      transition: background .12s ease;
+    }
+    .doc-row:hover{
+      background: #fafbff;
+    }
+    .thumb-mini{
+      width: 46px;
+      height: 60px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      overflow:hidden;
+      background:#f1f2f8;
+      box-shadow: 0 12px 20px rgba(22,24,35,.08);
+    }
+    .thumb-mini img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+    .nameblock{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width: 320px;
+    }
+    .nameblock .title{
+      font-weight: 750;
+      font-size: 14px;
+      max-width: 440px;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      white-space:nowrap;
+    }
+    .nameblock .sub{
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    /* Dropdown / tooltip tweaks */
+    .dropdown-menu{
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 18px 40px rgba(22,24,35,.14);
+      overflow:hidden;
+    }
+    .dropdown-item{
+      padding: 10px 12px;
+      font-weight: 600;
+      font-size: 14px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .dropdown-item i{ width: 18px; text-align:center; }
+
+    /* Preview modal */
+    .modal-xl{
+      --bs-modal-width: 1180px;
+    }
+    .preview-shell{
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap: 12px;
+      align-items: start;
+    }
+    @media (max-width: 992px){
+      .preview-shell{ grid-template-columns: 1fr; }
+    }
+
+    .sidepanel{
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+    }
+    .sidepanel .label{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .preview-area{
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow:hidden;
+    }
+    .preview-toolbar{
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      background: #fff;
+    }
+    .preview-canvas{
+      padding: 18px;
+      background: #f6f7fb;
+      max-height: 72vh;
+      overflow:auto;
+    }
+    .doc-page{
+      background:#fff;
+      border: 1px solid #eef0f7;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 20px 40px rgba(22,24,35,.10);
+    }
+
+    /* Report styling (inside preview) */
+    .report h1, .report h2, .report h3 { margin: 0 0 10px; }
+    .report p{ color:#2f3648; margin: 0 0 10px; }
+    .report .muted{ color:#6b7280; font-weight: 600; }
+    .report .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap:10px;
+      margin: 12px 0 14px;
+    }
+    .report .kpi .box{
+      border:1px solid #eef0f7;
+      border-radius: 14px;
+      padding: 12px;
+      background:#fff;
+    }
+    .report .kpi .box .v{
+      font-size: 18px;
+      font-weight: 900;
+      color:#111827;
+    }
+    .report .kpi .box .t{
+      font-size: 12px;
+      color:#6b7280;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    /* Table wrapper + customization menu */
+    .table-wrap{
+      position: relative;
+      margin-top: 10px;
+    }
+    .table-menu-btn{
+      position:absolute;
+      top: 10px;
+      right: 10px;
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.08);
+      background: rgba(255,255,255,.9);
+      display:grid;
+      place-items:center;
+      box-shadow: 0 12px 20px rgba(0,0,0,.10);
+      cursor:pointer;
+      z-index: 2;
+    }
+    .table-menu-btn:hover{ background:#fff; }
+
+    table.doc-table{
+      width:100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow:hidden;
+      border-radius: 14px;
+      border: 1px solid #eef0f7;
+      background:#fff;
+
+      /* customizable */
+      --hdr-bg: #111827;
+      --hdr-tx: #ffffff;
+      --row-alt: #f6f7fb;
+      --cell-bd: #eef0f7;
+    }
+    table.doc-table thead th{
+      background: var(--hdr-bg);
+      color: var(--hdr-tx);
+      font-weight: 800;
+      font-size: 12px;
+      padding: 12px 10px;
+      border-right: 1px solid rgba(255,255,255,.18);
+      white-space:nowrap;
+    }
+    table.doc-table thead th:last-child{ border-right:0; }
+    table.doc-table tbody td{
+      padding: 11px 10px;
+      font-size: 13px;
+      border-top: 1px solid var(--cell-bd);
+      color:#1f2937;
+    }
+    table.doc-table tbody tr:nth-child(even) td{
+      background: var(--row-alt);
+    }
+
+    .color-row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      padding: 6px 0;
+    }
+    .color-row label{
+      font-size: 13px;
+      font-weight: 700;
+      color:#374151;
+      margin:0;
+    }
+    .color-row input[type="color"]{
+      width: 48px;
+      height: 34px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 0;
+      background:#fff;
+    }
+
+    /* Small footer text */
+    .muted-small{ color: var(--muted); font-size: 12px; }
+
+    /* Pagination */
+    .pager{
+      padding: 12px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      background:#fff;
+    }
+    .pagination .page-link{
+      border-radius: 12px !important;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 700;
+      padding: 8px 12px;
+    }
+    .pagination .page-item.active .page-link{
+      background: rgba(103, 89, 255, .12);
+      border-color: rgba(103, 89, 255, .25);
+      color: var(--brand);
+    }
+
+    /* Helper */
+    .hidden{ display:none !important; }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="searchbox" data-bs-toggle="tooltip" data-bs-title="Pesquisar por nome, categoria, autor...">
+        <i class="bi bi-search"></i>
+        <input id="searchInput" placeholder="Search..." autocomplete="off"/>
+      </div>
+
+      <div class="pill">
+        <i class="bi bi-sort-down"></i>
+        <select id="sortSelect" class="form-select form-select-sm border-0 p-0" style="min-width:170px;">
+          <option value="updatedDesc">Mais Recente</option>
+          <option value="updatedAsc">Menos Recente</option>
+          <option value="nameAsc">Nome A–Z</option>
+          <option value="nameDesc">Nome Z–A</option>
+          <option value="sizeDesc">Tamanho (maior)</option>
+          <option value="sizeAsc">Tamanho (menor)</option>
+        </select>
+      </div>
+
+      <div class="icon-toggle" role="group" aria-label="View toggle">
+        <button id="btnGrid" class="active" data-bs-toggle="tooltip" data-bs-title="Vista em grelha">
+          <i class="bi bi-grid-3x3-gap-fill"></i>
+        </button>
+        <button id="btnList" data-bs-toggle="tooltip" data-bs-title="Vista em lista">
+          <i class="bi bi-view-list"></i>
+        </button>
+      </div>
+
+      <button class="btn btn-brand" id="btnAdd">
+        <i class="bi bi-plus-lg me-2"></i> Add Document
+      </button>
+    </div>
+
+    <!-- FILTERS / TABS -->
+    <div class="filters">
+      <div class="tabs" id="tabs"></div>
+
+      <div class="d-flex align-items-center gap-2">
+        <div class="form-check d-flex align-items-center gap-2 m-0">
+          <input class="form-check-input" type="checkbox" id="selectAllToggle">
+          <label class="form-check-label fw-semibold" for="selectAllToggle">Selecionar todos</label>
+        </div>
+        <button class="btn btn-outline-secondary" style="border-radius:14px;" id="btnClearSelection" data-bs-toggle="tooltip" data-bs-title="Limpar seleção">
+          <i class="bi bi-x-circle me-2"></i>Limpar
+        </button>
+      </div>
+    </div>
+
+    <!-- BULK BAR -->
+    <div class="bulkbar" id="bulkBar">
+      <div class="left">
+        <span class="chip"><i class="bi bi-check2-square me-2"></i><span id="selectedCount">0</span> selecionado(s)</span>
+        <span class="chip"><i class="bi bi-info-circle me-2"></i>Use ações rápidas ou abra o modal para operações em massa</span>
+      </div>
+      <div class="right">
+        <button class="btn btn-light" id="bulkDownloadBtn">
+          <i class="bi bi-file-earmark-zip me-2"></i>Download ZIP
+        </button>
+        <button class="btn btn-outline-light" id="bulkRemoveBtn">
+          <i class="bi bi-trash3 me-2"></i>Remover
+        </button>
+      </div>
+    </div>
+
+    <!-- GRID VIEW -->
+    <div class="grid" id="gridView"></div>
+
+    <!-- LIST VIEW -->
+    <div class="list-wrap" id="listView">
+      <div class="list-head">
+        <div class="d-flex align-items-center gap-2">
+          <span class="fw-bold">Documentos</span>
+          <span class="muted-small" id="listMeta"></span>
+        </div>
+        <div class="muted-small">Ações por linha: ver / renomear / descarregar / eliminar</div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="list-table table mb-0">
+          <thead>
+            <tr>
+              <th style="width:40px;"></th>
+              <th>Documento</th>
+              <th>Categoria</th>
+              <th>Última Atualização</th>
+              <th>Criado por</th>
+              <th class="text-end" style="width:120px;">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="listBody"></tbody>
+        </table>
+      </div>
+
+      <div class="pager">
+        <div class="muted-small" id="pagerInfo">Mostrando 1-10 de 20</div>
+        <nav>
+          <ul class="pagination mb-0" id="pagination"></ul>
+        </nav>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BULK MODAL -->
+  <div class="modal fade" id="bulkModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius:18px; border:1px solid var(--border);">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold">Operações em massa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="mb-2"><span class="fw-bold" id="bulkModalCount">0</span> documento(s) selecionado(s).</p>
+          <div class="alert alert-secondary" style="border-radius:14px;">
+            <div class="fw-bold mb-1">Download ZIP</div>
+            <div class="muted-small">Aqui vais “baixar todos em .zip”. Neste demo, simulamos com um ficheiro virtual.</div>
+          </div>
+
+          <div class="d-flex gap-2">
+            <button class="btn btn-brand flex-fill" id="bulkModalZip">
+              <i class="bi bi-file-earmark-zip me-2"></i>Baixar ZIP
+            </button>
+            <button class="btn btn-outline-danger flex-fill" id="bulkModalDelete">
+              <i class="bi bi-trash3 me-2"></i>Eliminar
+            </button>
+          </div>
+          <div class="muted-small mt-3">
+            Extra: podes integrar JSZip para zip real e downloads (aqui deixei preparado para plugar facilmente).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREVIEW MODAL -->
+  <div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius:18px; border:1px solid var(--border); overflow:hidden;">
+        <div class="modal-header">
+          <div class="d-flex flex-column">
+            <h5 class="modal-title fw-bold mb-0" id="previewTitle">Pré-visualização</h5>
+            <span class="muted-small" id="previewSub">Documento HTML personalizável</span>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-outline-secondary" style="border-radius:14px;" id="btnResetTemplate">
+              <i class="bi bi-arrow-counterclockwise me-2"></i>Reset
+            </button>
+            <button class="btn btn-brand" style="border-radius:14px;" id="btnDownloadSingle">
+              <i class="bi bi-download me-2"></i>Download
+            </button>
+            <button type="button" class="btn-close ms-1" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+        </div>
+
+        <div class="modal-body" style="background: var(--bg);">
+          <div class="preview-shell">
+            <div class="sidepanel">
+              <div class="label">Dados do relatório</div>
+              <div id="formFields" class="d-grid gap-2"></div>
+              <hr>
+              <div class="label">Dicas rápidas</div>
+              <ul class="muted-small mb-0">
+                <li>Alterar valores nos inputs atualiza o template.</li>
+                <li>Se o relatório tiver tabela: usa o botão <b>…</b> para mudar cores do header/linhas.</li>
+                <li>Podes guardar configurações por <code>reportId</code> (localStorage) — demo pronto para isso.</li>
+              </ul>
+            </div>
+
+            <div class="preview-area">
+              <div class="preview-toolbar">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge-soft" id="previewCategory">RELATÓRIO</span>
+                  <span class="muted-small" id="previewMeta"></span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <button class="btn btn-outline-secondary btn-sm" style="border-radius:12px;" id="btnPrint">
+                    <i class="bi bi-printer me-2"></i>Imprimir
+                  </button>
+                </div>
+              </div>
+
+              <div class="preview-canvas">
+                <div class="doc-page">
+                  <div id="previewHtml" class="report"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="background:#fff;">
+          <div class="muted-small">
+            Nota: este é um demo UI (sem backend). As ações (zip/download) são simuladas com mensagens.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    /***********************
+     * Demo data (array)
+     ***********************/
+    const docsSeed = [
+      {
+        id: "rep-1001",
+        name: "Relatorio_Entrega_Final_Cliente_A.pdf",
+        category: "SOP",
+        sizeMB: 100,
+        pages: 12,
+        createdAt: "2024-09-23",
+        updatedAt: "2024-01-23",
+        author: { name: "Wade Warren" },
+        thumb: "https://imgv2-2-f.scribdassets.com/img/document/786731558/original/410078e228/1?v=1",
+        kind: "pdf",
+        reportHtml: reportTemplate1(),
+        fields: [
+          { id: "clientName", label: "Cliente", type: "text", value: "Empresa Atlântica, Lda" },
+          { id: "project", label: "Projeto", type: "text", value: "Transporte Internacional" },
+          { id: "period", label: "Período", type: "select", options: ["Jan–Mar 2024","Abr–Jun 2024","Jul–Set 2024","Out–Dez 2024"], value: "Jan–Mar 2024" },
+          { id: "status", label: "Estado", type: "select", options: ["Em curso","Concluído","Em revisão"], value: "Concluído" },
+        ]
+      },
+      {
+        id: "rep-1002",
+        name: "Comprovante_Entrega_Final_Fornecedor_Local.pdf",
+        category: "SOP",
+        sizeMB: 25,
+        pages: 6,
+        createdAt: "2024-09-23",
+        updatedAt: "2024-02-23",
+        author: { name: "Darrell Steward" },
+        thumb: "https://website-assets.studocu.com/img/document_thumbnails/a36cecae2bcd3ef4022de5cb96b3c3f1/thumb_1200_1698.png",
+        kind: "pdf",
+        reportHtml: reportTemplate2(),
+        fields: [
+          { id: "supplier", label: "Fornecedor", type: "text", value: "NorteLog - Distribuição" },
+          { id: "docNo", label: "Nº Documento", type: "text", value: "CL-2024-0193" },
+          { id: "deliveryDate", label: "Data de entrega", type: "date", value: "2024-02-23" },
+          { id: "priority", label: "Prioridade", type: "select", options: ["Normal","Urgente","Crítica"], value: "Urgente" },
+        ]
+      },
+      {
+        id: "rep-1003",
+        name: "Contrato_Servico_Logistica_Internacional.pdf",
+        category: "Carta porte",
+        sizeMB: 12,
+        pages: 9,
+        createdAt: "2024-09-23",
+        updatedAt: "2024-03-23",
+        author: { name: "Brooklyn Simmons" },
+        thumb: "https://www.slideteam.net/wp/wp-content/uploads/2023/03/Planejamento-de-Tarefas-Diarias-para-Relatorio-de-Negocios-2.png",
+        kind: "pdf",
+        reportHtml: reportTemplate3(),
+        fields: [
+          { id: "contractRef", label: "Referência", type: "text", value: "CTR-INT-7781" },
+          { id: "route", label: "Rota", type: "text", value: "Lisboa → Madrid → Paris" },
+          { id: "incoterm", label: "Incoterm", type: "select", options: ["EXW","FCA","CPT","DAP","DDP"], value: "DAP" },
+          { id: "insurance", label: "Seguro", type: "select", options: ["Incluído","Opcional","Não incluído"], value: "Incluído" },
+        ]
+      },
+      {
+        id: "rep-1004",
+        name: "Guia_Remissao_Pedido_Urgente.pdf",
+        category: "Carta porte",
+        sizeMB: 5.5,
+        pages: 3,
+        createdAt: "2024-09-23",
+        updatedAt: "2024-04-23",
+        author: { name: "Jane Cooper" },
+        thumb: "https://www.slideteam.net/wp/wp-content/uploads/2024/03/3-Relatorio-de-status-de-trabalho-diario-do-funcionario-de-uma-pagina.png",
+        kind: "pdf",
+        reportHtml: reportTemplate4(),
+        fields: [
+          { id: "requester", label: "Solicitante", type: "text", value: "Operações - Central" },
+          { id: "ref", label: "Referência", type: "text", value: "URG-PO-4412" },
+          { id: "city", label: "Destino", type: "select", options: ["Porto","Lisboa","Coimbra","Faro"], value: "Porto" },
+          { id: "notes", label: "Notas", type: "textarea", value: "Verificar integridade da carga e recolher assinatura no local." },
+        ]
+      },
+      {
+        id: "rep-1005",
+        name: "Solicitacao_Transporte_Internacional_Cliente_B.pdf",
+        category: "Invoice",
+        sizeMB: 12,
+        pages: 4,
+        createdAt: "2024-09-23",
+        updatedAt: "2024-01-23",
+        author: { name: "Wade Warren" },
+        thumb: "https://imgv2-2-f.scribdassets.com/img/document/601542860/original/27bbd5501b/1?v=1",
+        kind: "pdf",
+        reportHtml: reportTemplate2(),
+        fields: [
+          { id: "supplier", label: "Cliente", type: "text", value: "Cliente B - Europa" },
+          { id: "docNo", label: "Nº Fatura", type: "text", value: "INV-2024-1044" },
+          { id: "deliveryDate", label: "Data", type: "date", value: "2024-01-23" },
+          { id: "priority", label: "Tipo", type: "select", options: ["Proforma","Final","Recibo"], value: "Final" },
+        ]
+      },
+      {
+        id: "rep-1006",
+        name: "Relatorio_Instrucao_Recursos_Administrativos.pdf",
+        category: "Evidências",
+        sizeMB: 10,
+        pages: 8,
+        createdAt: "2024-08-11",
+        updatedAt: "2024-02-10",
+        author: { name: "Darrell Steward" },
+        thumb: "https://img.yumpu.com/16768966/1/500x640/relatorio-de-instrucao-de-recursos-administrativos-infraero.jpg",
+        kind: "pdf",
+        reportHtml: reportTemplate1(),
+        fields: [
+          { id: "clientName", label: "Entidade", type: "text", value: "Infraestrutura & Serviços" },
+          { id: "project", label: "Tema", type: "text", value: "Recursos Administrativos" },
+          { id: "period", label: "Período", type: "select", options: ["Q1 2024","Q2 2024","Q3 2024","Q4 2024"], value: "Q1 2024" },
+          { id: "status", label: "Estado", type: "select", options: ["Rascunho","Validado","Publicado"], value: "Validado" },
+        ]
+      },
+      {
+        id: "rep-1007",
+        name: "Procedimento_Operacional_Padrao_SOP_01.pdf",
+        category: "SOP",
+        sizeMB: 3,
+        pages: 2,
+        createdAt: "2024-05-03",
+        updatedAt: "2024-05-09",
+        author: { name: "Brooklyn Simmons" },
+        thumb: "https://files.passeidireto.com/177a1cde-e3e4-4a58-9dcb-a60e3ce3eee8/177a1cde-e3e4-4a58-9dcb-a60e3ce3eee8.png",
+        kind: "pdf",
+        reportHtml: reportTemplate4(),
+        fields: [
+          { id: "requester", label: "Departamento", type: "text", value: "Qualidade" },
+          { id: "ref", label: "Código", type: "text", value: "SOP-01" },
+          { id: "city", label: "Unidade", type: "select", options: ["Lisboa","Porto","Braga"], value: "Lisboa" },
+          { id: "notes", label: "Observações", type: "textarea", value: "Aplicar checklist em todas as expedições." },
+        ]
+      },
+      {
+        id: "rep-1008",
+        name: "Evidencia_Auditoria_Interna_2024.pdf",
+        category: "Evidências",
+        sizeMB: 8,
+        pages: 5,
+        createdAt: "2024-06-13",
+        updatedAt: "2024-06-20",
+        author: { name: "Jane Cooper" },
+        thumb: "https://files.passeidireto.com/9b8a918f-82fb-460b-970f-c70505fb4dca/9b8a918f-82fb-460b-970f-c70505fb4dca.png",
+        kind: "pdf",
+        reportHtml: reportTemplate3(),
+        fields: [
+          { id: "contractRef", label: "Auditoria", type: "text", value: "AUD-INT-2024" },
+          { id: "route", label: "Área", type: "text", value: "Logística & Armazém" },
+          { id: "incoterm", label: "Severidade", type: "select", options: ["Baixa","Média","Alta"], value: "Média" },
+          { id: "insurance", label: "Ação", type: "select", options: ["Recomendação","Obrigatória","Informativa"], value: "Recomendação" },
+        ]
+      }
+    ];
+
+    // Working copy
+    let docs = structuredClone(docsSeed);
+
+    /***********************
+     * State
+     ***********************/
+    const state = {
+      view: "grid",          // grid | list
+      tab: "Todos",
+      query: "",
+      sort: "updatedDesc",
+      selected: new Set(),
+      page: 1,
+      perPage: 6,
+      currentDocId: null,
+      currentFields: {},
+      currentBaseHtml: ""
+    };
+
+    /***********************
+     * Helpers
+     ***********************/
+    const fmtDate = (iso) => {
+      const d = new Date(iso + "T00:00:00");
+      const map = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
+      return `${map[d.getMonth()]} ${String(d.getDate()).padStart(2,"0")}, ${d.getFullYear()}`;
+    };
+
+    const initials = (name) => {
+      const parts = name.trim().split(/\s+/).slice(0,2);
+      return parts.map(p => p[0]?.toUpperCase() || "").join("");
+    };
+
+    const catOrder = ["Todos","Evidências","Facturas","Carta porte","Invoice","SOP"];
+    const uniqueCats = () => {
+      const set = new Set(docs.map(d => d.category));
+      return ["Todos", ...catOrder.filter(c => c !== "Todos" && set.has(c)), ...[...set].filter(c => !catOrder.includes(c))];
+    };
+
+    const sizeLabel = (mb) => (mb % 1 === 0 ? `${mb} MB` : `${mb.toFixed(1)} MB`);
+
+    function compareDocs(a,b){
+      const sa = state.sort;
+      if(sa === "updatedDesc") return new Date(b.updatedAt) - new Date(a.updatedAt);
+      if(sa === "updatedAsc")  return new Date(a.updatedAt) - new Date(b.updatedAt);
+      if(sa === "nameAsc")     return a.name.localeCompare(b.name);
+      if(sa === "nameDesc")    return b.name.localeCompare(a.name);
+      if(sa === "sizeDesc")    return b.sizeMB - a.sizeMB;
+      if(sa === "sizeAsc")     return a.sizeMB - b.sizeMB;
+      return 0;
+    }
+
+    function getFiltered(){
+      const q = state.query.trim().toLowerCase();
+      return docs
+        .filter(d => state.tab === "Todos" ? true : d.category === state.tab)
+        .filter(d => {
+          if(!q) return true;
+          const hay = `${d.name} ${d.category} ${d.author.name}`.toLowerCase();
+          return hay.includes(q);
+        })
+        .sort(compareDocs);
+    }
+
+    function setSelected(id, checked){
+      if(checked) state.selected.add(id);
+      else state.selected.delete(id);
+      syncSelectAllToggle();
+      renderBulkBar();
+      render(); // update checkboxes
+    }
+
+    function syncSelectAllToggle(){
+      const filtered = getFiltered();
+      const allVisibleIds = new Set(filtered.map(d => d.id));
+      let allSelected = filtered.length > 0 && filtered.every(d => state.selected.has(d.id));
+      document.getElementById("selectAllToggle").checked = allSelected;
+
+      // Indeterminate state
+      const anySelected = filtered.some(d => state.selected.has(d.id));
+      document.getElementById("selectAllToggle").indeterminate = anySelected && !allSelected;
+    }
+
+    function clearSelection(){
+      state.selected.clear();
+      syncSelectAllToggle();
+      renderBulkBar();
+      render();
+    }
+
+    function renderBulkBar(){
+      const bar = document.getElementById("bulkBar");
+      const count = state.selected.size;
+      document.getElementById("selectedCount").textContent = count;
+      bar.style.display = count > 0 ? "flex" : "none";
+    }
+
+    /***********************
+     * Render tabs
+     ***********************/
+    function renderTabs(){
+      const tabsEl = document.getElementById("tabs");
+      tabsEl.innerHTML = "";
+
+      const cats = uniqueCats();
+      const filteredForCounts = docs;
+
+      cats.forEach(cat => {
+        const count = cat === "Todos"
+          ? filteredForCounts.length
+          : filteredForCounts.filter(d => d.category === cat).length;
+
+        const btn = document.createElement("button");
+        btn.className = "tab" + (state.tab === cat ? " active" : "");
+        btn.type = "button";
+        btn.innerHTML = `
+          <span>${cat}</span>
+          <span class="count">${count}</span>
+        `;
+        btn.onclick = () => {
+          state.tab = cat;
+          state.page = 1;
+          syncSelectAllToggle();
+          renderBulkBar();
+          renderTabs();
+          render();
+        };
+        tabsEl.appendChild(btn);
+      });
+    }
+
+    /***********************
+     * Grid render
+     ***********************/
+    function cardDropdown(doc){
+      return `
+        <div class="dropdown">
+          <button class="icon-btn" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" data-bs-title="Ações">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#" data-action="view" data-id="${doc.id}"><i class="bi bi-eye"></i> Ver Documento</a></li>
+            <li><a class="dropdown-item" href="#" data-action="rename" data-id="${doc.id}"><i class="bi bi-pencil"></i> Cambiar nome</a></li>
+            <li><a class="dropdown-item" href="#" data-action="download" data-id="${doc.id}"><i class="bi bi-download"></i> Descargar</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" data-action="delete" data-id="${doc.id}"><i class="bi bi-trash3"></i> Eliminar</a></li>
+          </ul>
+        </div>
+      `;
+    }
+
+    function renderGrid(items){
+      const grid = document.getElementById("gridView");
+      grid.innerHTML = "";
+
+      items.forEach(doc => {
+        const checked = state.selected.has(doc.id) ? "checked" : "";
+        const el = document.createElement("div");
+        el.className = "doc-card";
+        el.innerHTML = `
+          <div class="card-top">
+            <img src="${doc.thumb}" alt="" onerror="this.style.display='none'; this.parentElement.style.background='#eef0f7';">
+            <div class="card-actions">
+              <div class="left">
+                <button class="icon-btn" data-action="quick-download" data-id="${doc.id}" data-bs-toggle="tooltip" data-bs-title="Download rápido">
+                  <i class="bi bi-download"></i>
+                </button>
+              </div>
+              <div class="right">
+                ${cardDropdown(doc)}
+              </div>
+            </div>
+
+            <div class="doc-check">
+              <input type="checkbox" class="form-check-input m-0" data-check="${doc.id}" ${checked}/>
+              <span class="muted-small fw-semibold">Selecionar</span>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <p class="doc-title" title="${doc.name}">${doc.name}</p>
+            <div class="doc-meta">
+              <span class="badge-soft">${doc.category}</span>
+              <span>${sizeLabel(doc.sizeMB)} · ${doc.pages} Pages</span>
+            </div>
+            <div class="doc-sub">
+              <span class="muted-small">Atualizado: <b>${fmtDate(doc.updatedAt)}</b></span>
+              <div class="d-flex align-items-center gap-2">
+                <div class="avatar" title="${doc.author.name}">${initials(doc.author.name)}</div>
+              </div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(el);
+      });
+
+      // Wire checkboxes
+      grid.querySelectorAll("input[data-check]").forEach(cb => {
+        cb.addEventListener("change", (e) => setSelected(e.target.dataset.check, e.target.checked));
+      });
+    }
+
+    /***********************
+     * List render + pagination
+     ***********************/
+    function renderPagination(total){
+      const pages = Math.max(1, Math.ceil(total / state.perPage));
+      const ul = document.getElementById("pagination");
+      ul.innerHTML = "";
+
+      const mk = (label, page, disabled=false, active=false, icon=null) => {
+        const li = document.createElement("li");
+        li.className = "page-item" + (disabled ? " disabled" : "") + (active ? " active" : "");
+        const a = document.createElement("a");
+        a.className = "page-link";
+        a.href = "#";
+        a.innerHTML = icon ? `<i class="bi ${icon}"></i>` : label;
+        a.onclick = (ev) => {
+          ev.preventDefault();
+          if(disabled) return;
+          state.page = page;
+          render();
+        };
+        li.appendChild(a);
+        ul.appendChild(li);
+      };
+
+      mk("", Math.max(1, state.page - 1), state.page === 1, false, "bi-chevron-left");
+      for(let p=1; p<=pages; p++){
+        mk(String(p), p, false, p === state.page);
+      }
+      mk("", Math.min(pages, state.page + 1), state.page === pages, false, "bi-chevron-right");
+    }
+
+    function renderList(items){
+      const total = items.length;
+      const pages = Math.max(1, Math.ceil(total / state.perPage));
+      if(state.page > pages) state.page = pages;
+
+      const start = (state.page - 1) * state.perPage;
+      const pageItems = items.slice(start, start + state.perPage);
+
+      document.getElementById("listMeta").textContent = `(${total} total)`;
+      document.getElementById("pagerInfo").textContent =
+        total === 0 ? "Sem resultados" : `Mostrando ${start+1}-${Math.min(total, start + state.perPage)} de ${total}`;
+
+      renderPagination(total);
+
+      const tbody = document.getElementById("listBody");
+      tbody.innerHTML = "";
+
+      pageItems.forEach(doc => {
+        const checked = state.selected.has(doc.id);
+        const tr = document.createElement("tr");
+        tr.className = "doc-row";
+        tr.innerHTML = `
+          <td>
+            <input type="checkbox" class="form-check-input" data-check="${doc.id}" ${checked ? "checked":""}>
+          </td>
+          <td>
+            <div class="nameblock">
+              <div class="thumb-mini">
+                <img src="${doc.thumb}" alt="" onerror="this.style.display='none'; this.parentElement.style.background='#eef0f7';">
+              </div>
+              <div>
+                <div class="title" title="${doc.name}">${doc.name}</div>
+                <div class="sub">Creado: ${fmtDate(doc.createdAt)} · PDF | ${sizeLabel(doc.sizeMB)}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge-soft">${doc.category}</span></td>
+          <td class="fw-semibold">${fmtDate(doc.updatedAt)}</td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="avatar">${initials(doc.author.name)}</div>
+              <div class="fw-semibold">${doc.author.name}</div>
+            </div>
+          </td>
+          <td class="text-end">
+            <div class="d-inline-flex align-items-center gap-2">
+              <button class="btn btn-outline-secondary btn-sm" style="border-radius:12px;" data-action="view" data-id="${doc.id}" data-bs-toggle="tooltip" data-bs-title="Visualizar">
+                <i class="bi bi-eye"></i>
+              </button>
+              <button class="btn btn-outline-secondary btn-sm" style="border-radius:12px;" data-action="download" data-id="${doc.id}" data-bs-toggle="tooltip" data-bs-title="Descargar archivo">
+                <i class="bi bi-download"></i>
+              </button>
+
+              <div class="dropdown d-inline-block">
+                <button class="btn btn-outline-secondary btn-sm" style="border-radius:12px;" data-bs-toggle="dropdown" aria-expanded="false" data-bs-toggle="tooltip" data-bs-title="Mais ações">
+                  <i class="bi bi-three-dots"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><a class="dropdown-item" href="#" data-action="view" data-id="${doc.id}"><i class="bi bi-eye"></i> Ver Documento</a></li>
+                  <li><a class="dropdown-item" href="#" data-action="rename" data-id="${doc.id}"><i class="bi bi-pencil"></i> Cambiar nome</a></li>
+                  <li><a class="dropdown-item" href="#" data-action="download" data-id="${doc.id}"><i class="bi bi-download"></i> Descargar</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item text-danger" href="#" data-action="delete" data-id="${doc.id}"><i class="bi bi-trash3"></i> Eliminar</a></li>
+                </ul>
+              </div>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      tbody.querySelectorAll("input[data-check]").forEach(cb => {
+        cb.addEventListener("change", (e) => setSelected(e.target.dataset.check, e.target.checked));
+      });
+    }
+
+    /***********************
+     * Main render
+     ***********************/
+    function render(){
+      const filtered = getFiltered();
+
+      // Toggle views
+      const gridEl = document.getElementById("gridView");
+      const listEl = document.getElementById("listView");
+
+      if(state.view === "grid"){
+        gridEl.style.display = "grid";
+        listEl.style.display = "none";
+        renderGrid(filtered);
+      } else {
+        gridEl.style.display = "none";
+        listEl.style.display = "block";
+        renderList(filtered);
+      }
+
+      // Tooltip wiring
+      initTooltips();
+
+      // Keep selectAll in sync
+      syncSelectAllToggle();
+    }
+
+    function initTooltips(){
+      document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+        // Avoid duplicating instances
+        if(bootstrap.Tooltip.getInstance(el)) return;
+        new bootstrap.Tooltip(el);
+      });
+    }
+
+    /***********************
+     * Actions (view/rename/download/delete)
+     ***********************/
+    function handleAction(action, id){
+      const doc = docs.find(d => d.id === id);
+      if(!doc) return;
+
+      if(action === "view"){
+        openPreview(doc);
+      }
+
+      if(action === "rename"){
+        const next = prompt("Novo nome do documento:", doc.name);
+        if(next && next.trim()){
+          doc.name = next.trim();
+          render();
+        }
+      }
+
+      if(action === "download" || action === "quick-download"){
+        alert(`Simulação: download do ficheiro "${doc.name}"`);
+      }
+
+      if(action === "delete"){
+        if(confirm(`Eliminar "${doc.name}"?`)){
+          docs = docs.filter(d => d.id !== id);
+          state.selected.delete(id);
+          renderTabs();
+          renderBulkBar();
+          render();
+        }
+      }
+    }
+
+    // Delegate dropdown/menu clicks
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest("[data-action]");
+      if(!a) return;
+      e.preventDefault();
+      const action = a.dataset.action;
+      const id = a.dataset.id;
+      handleAction(action, id);
+    });
+
+    /***********************
+     * Select all toggle
+     ***********************/
+    document.getElementById("selectAllToggle").addEventListener("change", (e) => {
+      const filtered = getFiltered();
+      if(e.target.checked){
+        filtered.forEach(d => state.selected.add(d.id));
+      } else {
+        filtered.forEach(d => state.selected.delete(d.id));
+      }
+      renderBulkBar();
+      render();
+    });
+
+    document.getElementById("btnClearSelection").addEventListener("click", () => clearSelection());
+
+    /***********************
+     * Search + Sort
+     ***********************/
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+      state.query = e.target.value || "";
+      state.page = 1;
+      render();
+    });
+
+    document.getElementById("sortSelect").addEventListener("change", (e) => {
+      state.sort = e.target.value;
+      state.page = 1;
+      render();
+    });
+
+    /***********************
+     * View toggle
+     ***********************/
+    const btnGrid = document.getElementById("btnGrid");
+    const btnList = document.getElementById("btnList");
+
+    btnGrid.addEventListener("click", () => {
+      state.view = "grid";
+      btnGrid.classList.add("active");
+      btnList.classList.remove("active");
+      render();
+    });
+
+    btnList.addEventListener("click", () => {
+      state.view = "list";
+      btnList.classList.add("active");
+      btnGrid.classList.remove("active");
+      render();
+    });
+
+    /***********************
+     * Bulk actions
+     ***********************/
+    const bulkModalEl = document.getElementById("bulkModal");
+    const bulkModal = new bootstrap.Modal(bulkModalEl);
+
+    function openBulkModal(){
+      document.getElementById("bulkModalCount").textContent = state.selected.size;
+      bulkModal.show();
+    }
+
+    document.getElementById("bulkDownloadBtn").addEventListener("click", openBulkModal);
+    document.getElementById("bulkModalZip").addEventListener("click", () => {
+      alert(`Simulação: criar ZIP com ${state.selected.size} ficheiro(s).`);
+      bulkModal.hide();
+    });
+
+    document.getElementById("bulkRemoveBtn").addEventListener("click", () => {
+      if(state.selected.size === 0) return;
+      if(confirm(`Remover ${state.selected.size} documento(s)?`)){
+        const toRemove = new Set(state.selected);
+        docs = docs.filter(d => !toRemove.has(d.id));
+        clearSelection();
+        renderTabs();
+        render();
+      }
+    });
+
+    document.getElementById("bulkModalDelete").addEventListener("click", () => {
+      if(state.selected.size === 0) return;
+      if(confirm(`Eliminar ${state.selected.size} documento(s)?`)){
+        const toRemove = new Set(state.selected);
+        docs = docs.filter(d => !toRemove.has(d.id));
+        bulkModal.hide();
+        clearSelection();
+        renderTabs();
+        render();
+      }
+    });
+
+    /***********************
+     * Preview modal (HTML report)
+     ***********************/
+    const previewModalEl = document.getElementById("previewModal");
+    const previewModal = new bootstrap.Modal(previewModalEl);
+
+    function openPreview(doc){
+      state.currentDocId = doc.id;
+      state.currentBaseHtml = doc.reportHtml;
+      state.currentFields = Object.fromEntries(doc.fields.map(f => [f.id, f.value]));
+
+      document.getElementById("previewTitle").textContent = doc.name;
+      document.getElementById("previewCategory").textContent = doc.category.toUpperCase();
+      document.getElementById("previewMeta").textContent = `${sizeLabel(doc.sizeMB)} · ${doc.pages} páginas · Atualizado ${fmtDate(doc.updatedAt)}`;
+      document.getElementById("previewSub").textContent = `Criado por ${doc.author.name}`;
+
+      renderFormFields(doc);
+      renderPreviewHtml();
+
+      previewModal.show();
+      setTimeout(() => initTooltips(), 50);
+    }
+
+    function renderFormFields(doc){
+      const wrap = document.getElementById("formFields");
+      wrap.innerHTML = "";
+
+      doc.fields.forEach(f => {
+        const id = `field_${f.id}`;
+        const group = document.createElement("div");
+        group.className = "mb-2";
+
+        let control = "";
+        if(f.type === "select"){
+          control = `
+            <select class="form-select" id="${id}">
+              ${f.options.map(o => `<option ${o===state.currentFields[f.id] ? "selected":""}>${o}</option>`).join("")}
+            </select>
+          `;
+        } else if(f.type === "textarea"){
+          control = `<textarea class="form-control" id="${id}" rows="3">${state.currentFields[f.id] ?? ""}</textarea>`;
+        } else {
+          const val = state.currentFields[f.id] ?? "";
+          control = `<input class="form-control" id="${id}" type="${f.type}" value="${escapeAttr(val)}">`;
+        }
+
+        group.innerHTML = `
+          <label class="form-label fw-semibold">${f.label}</label>
+          ${control}
+        `;
+
+        wrap.appendChild(group);
+
+        // Bind change
+        setTimeout(() => {
+          const el = document.getElementById(id);
+          el.addEventListener("input", () => {
+            state.currentFields[f.id] = el.value;
+            renderPreviewHtml();
+          });
+          el.addEventListener("change", () => {
+            state.currentFields[f.id] = el.value;
+            renderPreviewHtml();
+          });
+        }, 0);
+      });
+    }
+
+    function escapeAttr(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;");
+    }
+
+    // Replace placeholders in template: {{fieldId}}
+    function compileTemplate(html){
+      return html.replace(/\{\{(\w+)\}\}/g, (_, key) => {
+        const v = state.currentFields[key];
+        return (v === undefined || v === null) ? "" : String(v);
+      });
+    }
+
+    function renderPreviewHtml(){
+      const container = document.getElementById("previewHtml");
+      const compiled = compileTemplate(state.currentBaseHtml);
+
+      container.innerHTML = compiled;
+
+      // Enhance tables: wrap + menu
+      enhanceTables(container);
+    }
+
+    function enhanceTables(root){
+      const tables = [...root.querySelectorAll("table")];
+      tables.forEach((t, idx) => {
+        t.classList.add("doc-table");
+
+        // Wrap if not wrapped
+        if(!t.parentElement.classList.contains("table-wrap")){
+          const wrap = document.createElement("div");
+          wrap.className = "table-wrap";
+          t.parentNode.insertBefore(wrap, t);
+          wrap.appendChild(t);
+
+          // Add menu button
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "table-menu-btn";
+          btn.innerHTML = `<i class="bi bi-three-dots"></i>`;
+          btn.setAttribute("data-bs-toggle","dropdown");
+          btn.setAttribute("aria-expanded","false");
+
+          const menu = document.createElement("div");
+          menu.className = "dropdown-menu dropdown-menu-end p-3";
+          menu.style.minWidth = "260px";
+          menu.innerHTML = `
+            <div class="fw-bold mb-2">Personalizar tabela</div>
+            <div class="color-row">
+              <label>Header (fundo)</label>
+              <input type="color" data-col="hdr-bg" value="${rgbToHex(getCssVar(t, '--hdr-bg') || '#111827')}">
+            </div>
+            <div class="color-row">
+              <label>Header (texto)</label>
+              <input type="color" data-col="hdr-tx" value="${rgbToHex(getCssVar(t, '--hdr-tx') || '#ffffff')}">
+            </div>
+            <div class="color-row">
+              <label>Linhas alternadas</label>
+              <input type="color" data-col="row-alt" value="${rgbToHex(getCssVar(t, '--row-alt') || '#f6f7fb')}">
+            </div>
+            <div class="color-row">
+              <label>Bordas células</label>
+              <input type="color" data-col="cell-bd" value="${rgbToHex(getCssVar(t, '--cell-bd') || '#eef0f7')}">
+            </div>
+            <hr class="my-2">
+            <button class="btn btn-outline-secondary w-100" data-reset-table="1" style="border-radius:12px;">
+              <i class="bi bi-arrow-counterclockwise me-2"></i>Reset tabela
+            </button>
+          `;
+
+          wrap.appendChild(btn);
+          wrap.appendChild(menu);
+
+          // Bind color changes
+          menu.querySelectorAll('input[type="color"]').forEach(inp => {
+            inp.addEventListener("input", () => {
+              const key = inp.dataset.col;
+              t.style.setProperty(`--${key}`, inp.value);
+              // Optional: persist per doc/table
+              // saveTablePrefs(state.currentDocId, idx, getTablePrefs(t));
+            });
+          });
+
+          menu.querySelector('[data-reset-table]').addEventListener("click", () => {
+            t.style.removeProperty("--hdr-bg");
+            t.style.removeProperty("--hdr-tx");
+            t.style.removeProperty("--row-alt");
+            t.style.removeProperty("--cell-bd");
+            // update inputs
+            menu.querySelectorAll('input[type="color"]').forEach(inp => {
+              const key = inp.dataset.col;
+              const fallback = {
+                "hdr-bg": "#111827",
+                "hdr-tx": "#ffffff",
+                "row-alt": "#f6f7fb",
+                "cell-bd": "#eef0f7"
+              }[key];
+              inp.value = fallback;
+            });
+          });
+        }
+      });
+
+      // Activate dropdowns inside preview
+      root.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(el => {
+        if(!bootstrap.Dropdown.getInstance(el)) new bootstrap.Dropdown(el);
+      });
+    }
+
+    function getCssVar(el, name){
+      return getComputedStyle(el).getPropertyValue(name).trim();
+    }
+
+    function rgbToHex(input){
+      const s = (input || "").trim();
+      if(!s) return "#000000";
+      if(s.startsWith("#")) return s;
+      const m = s.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/i);
+      if(!m) return "#000000";
+      const r = parseInt(m[1],10), g = parseInt(m[2],10), b = parseInt(m[3],10);
+      return "#" + [r,g,b].map(n => n.toString(16).padStart(2,"0")).join("");
+    }
+
+    document.getElementById("btnResetTemplate").addEventListener("click", () => {
+      const doc = docs.find(d => d.id === state.currentDocId);
+      if(!doc) return;
+
+      state.currentFields = Object.fromEntries(doc.fields.map(f => [f.id, f.value]));
+      renderFormFields(doc);
+      renderPreviewHtml();
+    });
+
+    document.getElementById("btnDownloadSingle").addEventListener("click", () => {
+      const doc = docs.find(d => d.id === state.currentDocId);
+      if(!doc) return;
+      alert(`Simulação: download do documento "${doc.name}"`);
+    });
+
+    document.getElementById("btnPrint").addEventListener("click", () => {
+      // Print only the preview HTML (simple demo)
+      const html = document.getElementById("previewHtml").innerHTML;
+      const w = window.open("", "_blank");
+      w.document.write(`
+        <html><head>
+          <title>Imprimir</title>
+          <style>
+            body{ font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; padding: 18px; }
+            .doc-table{ width:100%; border-collapse:separate; border-spacing:0; border:1px solid #eef0f7; border-radius:14px; overflow:hidden; }
+            .doc-table thead th{ background:#111827; color:#fff; padding:10px; font-size:12px; }
+            .doc-table td{ border-top:1px solid #eef0f7; padding:10px; font-size:13px; }
+          </style>
+        </head><body>${html}</body></html>
+      `);
+      w.document.close();
+      w.focus();
+      w.print();
+      w.close();
+    });
+
+    /***********************
+     * Add document (demo)
+     ***********************/
+    document.getElementById("btnAdd").addEventListener("click", () => {
+      const n = prompt("Nome do documento (fake):", `Novo_Relatorio_${Date.now()}.pdf`);
+      if(!n) return;
+
+      const newDoc = {
+        id: "rep-" + Math.random().toString(16).slice(2,8),
+        name: n.trim(),
+        category: "Evidências",
+        sizeMB: 3,
+        pages: 2,
+        createdAt: "2024-10-01",
+        updatedAt: "2024-10-01",
+        author: { name: "Wade Warren" },
+        thumb: "https://imgv2-1-f.scribdassets.com/img/document/380178454/original/8b10ba6006/1?v=1",
+        kind: "pdf",
+        reportHtml: reportTemplate4(),
+        fields: [
+          { id: "requester", label: "Responsável", type: "text", value: "Operações" },
+          { id: "ref", label: "Referência", type: "text", value: "NEW-001" },
+          { id: "city", label: "Local", type: "select", options: ["Lisboa","Porto","Braga"], value: "Lisboa" },
+          { id: "notes", label: "Notas", type: "textarea", value: "Documento criado via botão Add." },
+        ]
+      };
+
+      docs.unshift(newDoc);
+      renderTabs();
+      render();
+    });
+
+    /***********************
+     * Templates (HTML reports)
+     ***********************/
+    function reportTemplate1(){
+      return `
+        <div class="report">
+          <div class="d-flex align-items-start justify-content-between gap-3">
+            <div>
+              <h2 style="font-weight:900;">Relatório de Performance</h2>
+              <p class="muted">Cliente: <b>{{clientName}}</b> · Projeto: <b>{{project}}</b></p>
+              <p class="muted">Período: <b>{{period}}</b> · Estado: <b>{{status}}</b></p>
+            </div>
+            <div style="text-align:right;">
+              <div class="badge-soft">ID: REP-HTML</div>
+              <div class="muted-small mt-2">Gerado automaticamente</div>
+            </div>
+          </div>
+
+          <div class="kpi">
+            <div class="box">
+              <div class="v">98%</div>
+              <div class="t">Cumprimento SLA</div>
+            </div>
+            <div class="box">
+              <div class="v">2h 14m</div>
+              <div class="t">Tempo médio</div>
+            </div>
+            <div class="box">
+              <div class="v">12</div>
+              <div class="t">Ocorrências</div>
+            </div>
+          </div>
+
+          <p><b>Resumo:</b> Este relatório agrega indicadores operacionais e qualidade de serviço para suporte à decisão.</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Indicador</th>
+                  <th>Meta</th>
+                  <th>Resultado</th>
+                  <th>Observação</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Entregas no prazo</td><td>95%</td><td>97%</td><td>Acima do esperado</td></tr>
+                <tr><td>Incidentes</td><td>&lt; 15</td><td>12</td><td>Dentro do limite</td></tr>
+                <tr><td>Reclamações</td><td>&lt; 8</td><td>5</td><td>Boa tendência</td></tr>
+                <tr><td>Tempo de resposta</td><td>&lt; 3h</td><td>2h 14m</td><td>Estável</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="muted-small mt-3">Assinatura digital · Documento HTML personalizável</p>
+        </div>
+      `;
+    }
+
+    function reportTemplate2(){
+      return `
+        <div class="report">
+          <div class="d-flex align-items-start justify-content-between gap-3">
+            <div>
+              <h2 style="font-weight:900;">Comprovativo / Fatura</h2>
+              <p class="muted">Entidade: <b>{{supplier}}</b></p>
+              <p class="muted">Documento: <b>{{docNo}}</b> · Data: <b>{{deliveryDate}}</b></p>
+              <p class="muted">Tipo/Prioridade: <b>{{priority}}</b></p>
+            </div>
+            <div style="text-align:right;">
+              <div class="badge-soft">Documento</div>
+              <div class="muted-small mt-2">Versão: 1.0</div>
+            </div>
+          </div>
+
+          <p class="mt-2"><b>Objetivo:</b> Registo de entrega e validação dos itens associados.</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Descrição</th>
+                  <th>Qtd</th>
+                  <th>Valor</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>001</td><td>Serviço de transporte</td><td>1</td><td>€ 1.250,00</td></tr>
+                <tr><td>002</td><td>Taxa de manuseamento</td><td>1</td><td>€ 90,00</td></tr>
+                <tr><td>003</td><td>Seguro adicional</td><td>1</td><td>€ 45,00</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="d-flex justify-content-between mt-3">
+            <div class="muted-small">
+              Observação: valores para fins demonstrativos.
+            </div>
+            <div class="fw-bold">
+              Total: € 1.385,00
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function reportTemplate3(){
+      return `
+        <div class="report">
+          <div class="d-flex align-items-start justify-content-between gap-3">
+            <div>
+              <h2 style="font-weight:900;">Contrato / Resumo Operacional</h2>
+              <p class="muted">Ref: <b>{{contractRef}}</b></p>
+              <p class="muted">Rota/Área: <b>{{route}}</b></p>
+              <p class="muted">Incoterm/Severidade: <b>{{incoterm}}</b> · Seguro/Ação: <b>{{insurance}}</b></p>
+            </div>
+            <div style="text-align:right;">
+              <div class="badge-soft">Resumo</div>
+              <div class="muted-small mt-2">Compatível com impressão</div>
+            </div>
+          </div>
+
+          <div class="kpi">
+            <div class="box">
+              <div class="v">40</div>
+              <div class="t">Cláusulas</div>
+            </div>
+            <div class="box">
+              <div class="v">12 meses</div>
+              <div class="t">Duração</div>
+            </div>
+            <div class="box">
+              <div class="v">1</div>
+              <div class="t">Anexos</div>
+            </div>
+          </div>
+
+          <p><b>Notas principais:</b> Este documento resume condições-chave e métricas associadas.</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Secção</th>
+                  <th>Descrição</th>
+                  <th>Obrigatoriedade</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Escopo</td><td>Serviços incluídos e limitações</td><td>Obrigatório</td></tr>
+                <tr><td>SLA</td><td>Indicadores e penalizações</td><td>Obrigatório</td></tr>
+                <tr><td>Pagamentos</td><td>Condições e prazos</td><td>Obrigatório</td></tr>
+                <tr><td>Segurança</td><td>Controlo de acesso e auditoria</td><td>Recomendado</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function reportTemplate4(){
+      return `
+        <div class="report">
+          <div class="d-flex align-items-start justify-content-between gap-3">
+            <div>
+              <h2 style="font-weight:900;">Guia / Procedimento</h2>
+              <p class="muted">Responsável/Depto: <b>{{requester}}</b></p>
+              <p class="muted">Referência: <b>{{ref}}</b> · Local: <b>{{city}}</b></p>
+            </div>
+            <div style="text-align:right;">
+              <div class="badge-soft">Checklist</div>
+              <div class="muted-small mt-2">Documento interno</div>
+            </div>
+          </div>
+
+          <p class="mt-2"><b>Observações:</b></p>
+          <div style="border:1px solid #eef0f7;border-radius:14px;padding:12px;background:#fff;">
+            <div class="muted-small" style="white-space:pre-wrap;">{{notes}}</div>
+          </div>
+
+          <div class="table-wrap mt-3">
+            <table>
+              <thead>
+                <tr>
+                  <th>Etapa</th>
+                  <th>Descrição</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>1</td><td>Validar dados do pedido</td><td>Pendente</td></tr>
+                <tr><td>2</td><td>Confirmar documentação</td><td>Pendente</td></tr>
+                <tr><td>3</td><td>Registar evidências</td><td>Pendente</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    /***********************
+     * Init
+     ***********************/
+    renderTabs();
+    render();
+    renderBulkBar();
+    initTooltips();
+  </script>
+</body>
+</html>
