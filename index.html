@@ -43,6 +43,7 @@
     <link href="assets/css/module-css/apps.css" rel="stylesheet">
     <link href="assets/css/module-css/footer.css" rel="stylesheet">
     <link href="assets/css/responsive.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-notify@0.5.5/dist/simple-notify.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
         integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -358,7 +359,7 @@
                                                     <div class="group-item">
                                                         <label for="sector">Setor <span
                                                                 class="text-danger ml-2">*</span></label>
-                                                        <select required class="form-select" name="sectors">
+                                                        <select required id="sector" class="form-select" name="sectors">
                                                             <option value="Agri-food">Agroalimentar</option>
                                                             <option value="Commerce">Comércio</option>
                                                             <option value="Construction">Construção</option>
@@ -927,17 +928,91 @@
     <script src="assets/js/jquery.circleType.js"></script>
     <script src="assets/js/script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.14.1/gsap.min.js"></script>
-    <script src="https://unpkg.com/@barba/core"></script>
-
-
-
+    <script src="https://unpkg.com/@barba/core"></script> 
     <script src="assets/js/main.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/simple-notify@0.5.5/dist/simple-notify.min.js"></script>
+
     <script>
+    $(document).ready(function () {
+        $("#quote-form").on("submit", function (e) {
+            e.preventDefault();
 
+            let ClientName = $("#full-name").val().trim();
+            let ClientEmail = $("#email").val().trim();
+            let ClientCompany = $("#company").val().trim();
+            let ClientPhone = $("#phone").val().trim();
+            let ClientNif = $("#tax-id").val().trim();
+            let ClientSector = $("#sector").val();
+            let ClientTotalCustomers = $("#total-employees").val().trim();
+            let ClientMessage = $("#description").val().trim();
+ 
+            if (!ClientName || !ClientEmail || !ClientCompany || !ClientPhone || !ClientNif || !ClientSector || !ClientTotalCustomers) {
+                showToast('error', 'Erro', 'Por favor preencha todos os campos obrigatórios!');
+                console.log({
+                    ClientName ,
+                    ClientEmail ,
+                    ClientCompany ,
+                    ClientPhone,
+                    ClientNif ,
+                    ClientSector ,
+                    ClientTotalCustomers
+                })
+                return;
+            }
 
-     
-        
+            if (isNaN(ClientPhone) || ClientPhone.length < 5) {
+                showToast('error', 'Erro', 'O número de telemóvel é inválido!');
+                return;
+            }
 
+            let $btn = $("#btn-submit");
+            let originalBtnText = $btn.html();
+ 
+            $btn.prop("disabled", true).html('<span class="spinner-border spinner-border-sm"></span> Enviando...');
+
+            $.ajax({
+                url: "https://mailtxt.vercel.app/sendemailaddressmessagetocompany",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    nif: ClientNif,
+                    name: ClientName,
+                    company: ClientCompany,
+                    sector: ClientSector,
+                    email: ClientEmail,
+                    phone: ClientPhone,
+                    employeesnumber: ClientTotalCustomers,
+                    message: ClientMessage
+                }),
+                success: function () {
+                    showToast('success', 'Sucesso', 'Mensagem enviada com sucesso!');
+                    $("#quote-form")[0].reset();
+                    $btn.prop("disabled", false).html(originalBtnText);
+                },
+                error: function (error) {
+                    console.log(error)
+                    showToast('error', 'Erro', 'Erro ao enviar a mensagem!');
+                    $btn.prop("disabled", false).html(originalBtnText);
+                }
+            });
+        });
+ 
+        function showToast(status, title, text) {
+            new Notify({
+                status: status,
+                title: title,
+                text: text,
+                effect: 'fade',
+                speed: 300,
+                autoclose: true,
+                autotimeout: 3000  
+            });
+        }
+    });
+    </script>
+
+    <script>
+ 
         let TabContainer = document.querySelector(".tab-content");
         if (TabContainer) {
             let HaderItems = TabContainer.querySelectorAll(".tab-header li");
