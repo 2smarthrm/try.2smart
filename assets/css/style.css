@@ -4423,12 +4423,14 @@ body .try-sticky-header{
 
 
 
-
+#image-rev{
+  display: none;
+}
 
     @media only  screen and (max-width:900px) { 
           body .try-demo-header ,
           body .try-demo-header .over-header{
-            min-height: 160vh !important; 
+            min-height: 170vh !important; 
           }
           
           body .try-demo-header .try-content{
@@ -4437,7 +4439,7 @@ body .try-sticky-header{
           }
 
           body .try-demo-header .try-content .txt{
-            padding-top:0px !important;
+            padding-top:80px !important;
           }
 
           body .try-demo-header{
@@ -4462,6 +4464,42 @@ body .try-sticky-header{
            width:100%;
            min-width:100% !important;
         }
+
+        body .custom-header .over-header{
+          background:rgba(0,0,0,0.55) !important;
+        }
+
+        body .testimonial-title{
+           font-size:25px !important;
+        }
+
+        body .try-about-text-block .box-info{
+          width:100% !important;
+          min-width: 100% !important;
+        }
+
+        body .rev-img-nn{
+          display: none;
+        }
+
+        body  #image-rev{
+            display: block !important;
+        }
+
+        body .about-style-two {
+          padding-bottom:0px !important;
+        }
+
+        body .text-align-center-mb{
+          text-align: center;
+        }
+
+        body .lt-app li{
+          list-style:none !important;
+        }
+
+
+
     }
 
 
