@@ -927,9 +927,9 @@
 
     <script src="assets/js/jquery.circleType.js"></script>
     <script src="assets/js/script.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.14.1/gsap.min.js"></script>
-    <script src="https://unpkg.com/@barba/core"></script> 
-    <script src="assets/js/main.js"></script>
+    <script src="https://unpkg.com/@barba/core"></script>  
      <script src="https://cdn.jsdelivr.net/npm/simple-notify@0.5.5/dist/simple-notify.min.js"></script>
 
     <script>
@@ -971,7 +971,7 @@
             $btn.prop("disabled", true).html('<span class="spinner-border spinner-border-sm"></span> Enviando...');
 
             $.ajax({
-                url: "https://mailtxt.vercel.app/sendemailaddressmessagetocompany",
+                url:"https://mailtxt.vercel.app/sendemailaddressmessagetocompany",
                 method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify({
@@ -1029,6 +1029,8 @@
             }
         } 
     </script>
+
+    <script src="assets/js/main.js"></script>
 </body>
 
 </html>
