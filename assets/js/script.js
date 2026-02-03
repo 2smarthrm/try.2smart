@@ -366,7 +366,7 @@
 			navText: ['<span class="icon-21"></span>', '<span class="icon-22"></span>'],
 			responsive: {
 				0: {
-					items: 1
+					items: 2
 				},
 				480: {
 					items: 2
