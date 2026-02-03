@@ -6,11 +6,12 @@
 ====================================================================
 
  ***/
- * {
+ *,html {
    margin: 0px;
    padding: 0px;
    border: none;
    outline: none;
+   scroll-behavior: smooth;
  }
 
 
@@ -4392,11 +4393,12 @@ body .try-features{
    display: flex;
    flex-wrap: wrap;
    gap:20px;
+   padding:0px 20px;
 }
 
 body .try-features article{
     width:48%;
-    height:230px;
+    min-height:230px;
     border-radius:6px;
     padding:20px;
     border:1px solid #e5e5e5;
@@ -4411,3 +4413,57 @@ body .try-features article h5{
   margin-bottom:10px;
   font-size:25px;
 }
+
+body .try-sticky-header{
+  padding-top:20px;
+  padding-bottom:20px;
+}
+
+
+
+
+
+
+
+    @media only  screen and (max-width:900px) { 
+          body .try-demo-header ,
+          body .try-demo-header .over-header{
+            min-height: 160vh !important; 
+          }
+          
+          body .try-demo-header .try-content{
+            display: flex;
+            flex-direction: column;
+          }
+
+          body .try-demo-header .try-content .txt{
+            padding-top:0px !important;
+          }
+
+          body .try-demo-header{
+            margin-bottom:10px;
+          }
+
+          body .try-demo-header .try-content  .form-area{
+            min-width:100% !important;
+            width:100% !important;;
+          }
+
+        body .try-demo-header .try-content  ul li span{
+          font-size:15px !important;
+        }
+
+        body .try-menu-area{
+          display: none;
+        }
+
+        
+        body .try-features article{
+           width:100%;
+           min-width:100% !important;
+        }
+    }
+
+
+
+ 
